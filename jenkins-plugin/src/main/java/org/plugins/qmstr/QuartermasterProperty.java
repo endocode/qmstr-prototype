@@ -8,6 +8,7 @@ import net.sf.json.JSONObject;
 import org.kohsuke.stapler.StaplerRequest;
 import jenkins.model.ParameterizedJobMixIn;
 
+import java.io.IOException;
 import java.util.logging.Logger;
 
 public class QuartermasterProperty extends JobProperty<Job<?, ?>>  {
@@ -15,10 +16,36 @@ public class QuartermasterProperty extends JobProperty<Job<?, ?>>  {
     Process qmstr_master;
 
     @DataBoundConstructor
-    public QuartermasterProperty(String param) {
+    public QuartermasterProperty() {
         /**
          * Start qmstr-master
          */
+
+        try {
+            Runtime.getRuntime().exec("cd /qmstr-prototype/qmstr/qmstr-master");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            Runtime.getRuntime().exec("./qmstr-master");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        String command = "curl http://localhost:8080/report";
+        Process p = null;
+        try {
+            p = Runtime.getRuntime().exec(command);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        LOGGER.info("Qmstr running and getting the report: " + p);
+        System.out.print(p);
+        //end connection
+        try {
+            Runtime.getRuntime().exec("curl http://localhost:8080/quit");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public String getName() {
