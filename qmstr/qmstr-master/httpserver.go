@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -339,10 +338,9 @@ func handleLinkedTargetsRequest(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
 	Info.Printf("handleLinkedTargetsRequest: return linked targets...")
 
-	b, err := json.Marshal(Model.GetAllLinkedTargets)
+	b, err := json.Marshal(Model.GetAllLinkedTargets())
 	if err == nil {
-		n := bytes.IndexByte(b, 0)
-		result := fmt.Sprintf("{ \"linkedtargets\" : %s}", string(b[:n]))
+		result := fmt.Sprintf("{ \"linkedtargets\" : %s}", string(b))
 		w.Write([]byte(result))
 	} else {
 		Info.Printf("Error: %v", err)
