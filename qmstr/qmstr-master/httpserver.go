@@ -312,6 +312,15 @@ func handleTargetRequest(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func handleNinkaRequest(w http.ResponseWriter, r *http.Request)  {
+	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
+	Info.Printf("handleNinkaRequest: analyzing sources with Ninka...")
+	t := Model.GetAllTargetEntities()
+	analysis := useNinka(t)
+	result := fmt.Sprintf("{ \"analysis using Ninka\": \"%s\" }", analysis)
+	w.Write([]byte(result))
+}
+
 func handleReportRequest(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
 	Info.Printf("handleReportRequest: creating report...")
@@ -391,6 +400,7 @@ func startHTTPServer() chan string {
 	http.HandleFunc("/sources", handleSourceRequest)
 	http.HandleFunc("/dependencies", handleDependencyRequest)
 	http.HandleFunc("/targets", handleTargetRequest)
+	http.HandleFunc("/ninka", handleNinkaRequest)
 	http.HandleFunc("/report", handleReportRequest)
 	http.HandleFunc("/health", handleHealthRequest)
 	http.HandleFunc("/dump", handleDumpRequest)
