@@ -10,8 +10,6 @@ import (
 
 // analyze sources with Ninka for all the Target Entities
 func useNinka(targets []model.TargetEntity) map[string][]string {
-	client := model.NewClient("http://localhost:9000/")
-
 	analysis := make(map[string][]string)
 	for _, target := range targets {
 		var s model.SourceEntity
@@ -40,7 +38,6 @@ func useNinka(targets []model.TargetEntity) map[string][]string {
 		}
 		s.Licenses = licenses
 		analysis[target.Name] = licenses
-		client.AddSourceEntity(s)
 	}
 
 	return analysis
