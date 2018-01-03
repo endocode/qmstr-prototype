@@ -145,10 +145,8 @@ func (a *GNUCAnalyzer) extractLibs() {
 
 func (a *GNUCAnalyzer) detectObjectFiles() {
 	for index, arg := range a.args {
-		if extension := filepath.Ext(arg); extension == ".o" {
-			if a.args[index-1] != "-o" {
-				a.sources = append(a.sources, index)
-			}
+		if arg == "-o" {
+			a.sources = append(a.sources, index+1)
 		}
 	}
 }
