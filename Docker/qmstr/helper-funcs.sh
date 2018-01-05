@@ -1,5 +1,19 @@
 #!/bin/bash
 
+function multiecho(){
+    str=$1
+    num=$2
+    v=$(printf "%-${num}s" "$str")
+    echo "${v// /${str}}"
+}
+
+function printheader(){
+    str=$1
+    echo
+    echo "$str"
+    multiecho "=" ${#str}
+}
+
 function quit(){
     curl http://localhost:9000/quit
 }
@@ -22,7 +36,13 @@ function build_cmake(){
 }
 
 function build_qmstr(){
-    go get qmstr-prototype/qmstr/qmstr-master
-    go install qmstr-prototype/qmstr/qmstr-master
-    go install qmstr-prototype/qmstr/qmstr-wrapper
+    PROGS="qmstr-prototype/qmstr/qmstr-master qmstr-prototype/qmstr/qmstr-wrapper"
+    for p in $PROGS; do
+        printheader "Building $p"
+        go build -i -v $p
+        printheader "Testing $p"
+        go test -i -v $p
+        printheader "Installing $p"
+        go install -v $p
+    done
 }
