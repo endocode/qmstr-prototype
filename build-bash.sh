@@ -16,6 +16,7 @@ fi
 ~/go/bin/qmstr-master &
 make -j5
 
+curl http://localhost:9000/ninka
 curl http://localhost:9000/report?id=bash
 
 curl http://localhost:9000/quit

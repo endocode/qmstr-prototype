@@ -163,13 +163,7 @@ func (a *GNUCAnalyzer) SendResults() {
 			t.Hash = "targethash"
 			t.Linked = false
 
-			var s model.SourceEntity
-			s.Path = a.args[a.sources[idx]]
-			s.Hash = "filehash"
-			s.Licenses = analyzeSourceFile(s.Path)
-			client.AddSourceEntity(s)
-
-			t.Sources = []string{s.ID()}
+			t.Sources = []string{a.args[a.sources[idx]]}
 			client.AddTargetEntity(t)
 		}
 	} else if a.mode == LINK {
