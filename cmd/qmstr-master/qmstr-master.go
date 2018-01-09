@@ -6,18 +6,10 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
-	model "qmstr-prototype/qmstr/qmstr-model"
 
+	"github.com/QMSTR/qmstr-prototype/pkg/master"
+	"github.com/QMSTR/qmstr-prototype/pkg/model"
 	"github.com/spf13/pflag"
-)
-
-var (
-	// Info is the logger for INFO level output.
-	Info *log.Logger
-	// Log is the default logger.
-	Log *log.Logger
-	// Model is the data model managed by the master process.
-	Model *model.DataModel
 )
 
 func main() {
@@ -33,17 +25,19 @@ func main() {
 	} else {
 		infoWriter = ioutil.Discard
 	}
-	Info = log.New(infoWriter, "INFO: ", log.Ldate|log.Ltime)
-	Log = log.New(os.Stdout, "", log.Ldate|log.Ltime)
-	Info.Printf("quartermaster master process starting")
-	defer Info.Printf("quartermaster master process exiting")
+
+	info := log.New(infoWriter, "INFO: ", log.Ldate|log.Ltime)
+	logr := log.New(os.Stdout, "", log.Ldate|log.Ltime)
+
+	info.Printf("quartermaster master process starting")
+	defer info.Printf("quartermaster master process exiting")
 	if printVersion {
 		// --version prints the version and then exits:
 		fmt.Println("Quartermaster master 0.0.1")
 		return
 	}
 	// default: run the master server until a quit requests comes in
-	Model = model.NewModel()
+	modl := model.NewModel()
 	// TODO: also react to a SIGTERM/SIGKILL
-	Log.Printf(<-startHTTPServer())
+	logr.Printf(<-master.StartHTTPServer(info, logr, modl))
 }

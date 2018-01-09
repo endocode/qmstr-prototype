@@ -1,11 +1,12 @@
-package main
+package master
 
 import (
 	"bytes"
 	"log"
-	model "qmstr-prototype/qmstr/qmstr-model"
 	"strings"
 	"text/template"
+
+	"github.com/QMSTR/qmstr-prototype/pkg/model"
 )
 
 type report struct {

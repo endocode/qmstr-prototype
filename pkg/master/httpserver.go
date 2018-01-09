@@ -1,14 +1,25 @@
-package main
+package master
 
 import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 	"path/filepath"
-	analysis "qmstr-prototype/qmstr/qmstr-analysis"
-	model "qmstr-prototype/qmstr/qmstr-model"
-	util "qmstr-prototype/qmstr/qmstr-util"
+
+	"github.com/QMSTR/qmstr-prototype/pkg/analysis"
+	"github.com/QMSTR/qmstr-prototype/pkg/model"
+	"github.com/QMSTR/qmstr-prototype/pkg/util"
+)
+
+var (
+	// Info is the logger for INFO level output.
+	Info *log.Logger
+	// Log is the default logger.
+	Log *log.Logger
+	// Model is the data model managed by the master process.
+	Model *model.DataModel
 )
 
 var closeServer chan interface{}
@@ -415,7 +426,12 @@ func handleLogRequest(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func startHTTPServer() chan string {
+func StartHTTPServer(info, logr *log.Logger, modl *model.DataModel) chan string {
+
+	Info = info
+	Log = logr
+	Model = modl
+
 	address := ":9000"
 	server := &http.Server{Addr: address}
 	http.HandleFunc("/quit", handleQuitRequest)

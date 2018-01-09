@@ -9,9 +9,10 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-	analyze "qmstr-prototype/qmstr/qmstr-compiler"
-	util "qmstr-prototype/qmstr/qmstr-util"
 	"syscall"
+
+	"github.com/QMSTR/qmstr-prototype/pkg/util"
+	"github.com/QMSTR/qmstr-prototype/pkg/wrapper"
 )
 
 const debugEnv string = "QMSTR_DEBUG"
@@ -125,10 +126,10 @@ func findExecutable(file string) error {
 }
 
 //return a more generic type
-func getAnalyzer(program string, args []string, workingDir string, debug bool) *analyze.GNUCAnalyzer {
+func getAnalyzer(program string, args []string, workingDir string, debug bool) *wrapper.GNUCAnalyzer {
 	switch program {
 	case "g++", "gcc":
-		return analyze.NewGNUCAnalyzer(args, workingDir, debug)
+		return wrapper.NewGNUCAnalyzer(args, workingDir, debug)
 	default:
 		log.Fatal("Compiler not supported")
 	}

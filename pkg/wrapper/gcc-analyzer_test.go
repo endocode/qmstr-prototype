@@ -1,4 +1,4 @@
-package compiler_analyzer
+package wrapper
 
 import (
 	"testing"

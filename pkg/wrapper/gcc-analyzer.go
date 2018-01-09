@@ -1,10 +1,11 @@
-package compiler_analyzer
+package wrapper
 
 import (
 	"path/filepath"
-	model "qmstr-prototype/qmstr/qmstr-model"
 	"regexp"
 	"strings"
+
+	"github.com/QMSTR/qmstr-prototype/pkg/model"
 )
 
 type mode int
