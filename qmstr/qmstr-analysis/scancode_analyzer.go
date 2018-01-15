@@ -59,7 +59,7 @@ func (sc *ScancodeAnalyzer) Analyze(a Analyzable) error {
 		return err
 	}
 
-	a.StoreResult(sc.result)
+	a.StoreResult(sc.GetName(), sc.result)
 
 	return nil
 }

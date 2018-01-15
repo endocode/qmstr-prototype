@@ -13,7 +13,7 @@ type Entity interface {
 type SourceEntity struct {
 	Path     string
 	Hash     string
-	Licenses []string
+	Licenses map[string][]string
 }
 
 // ID for SourceEntity uses the path (assuming it is the package local
@@ -22,9 +22,9 @@ func (e *SourceEntity) ID() string {
 	return e.Path
 }
 
-func (e *SourceEntity) StoreResult(result map[string]interface{}) error {
+func (e *SourceEntity) StoreResult(toolName string, result map[string]interface{}) error {
 	if lics, ok := result["licenses"]; ok {
-		e.Licenses = lics.([]string)
+		e.Licenses[toolName] = lics.([]string)
 	}
 	return nil
 }

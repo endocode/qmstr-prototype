@@ -1,7 +1,7 @@
 package analysis
 
 type Analyzable interface {
-	StoreResult(result map[string]interface{}) error
+	StoreResult(toolName string, result map[string]interface{}) error
 	GetFile() string
 }
 

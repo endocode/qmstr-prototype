@@ -8,7 +8,7 @@ import (
 )
 
 func TestCRUDSourceEntity(t *testing.T) {
-	source := SourceEntity{"a/b/source.c", "1234567890", []string{"GPL-3.0"}}
+	source := SourceEntity{"a/b/source.c", "1234567890", map[string][]string{"Ninka analyzer" : {"GPL-3.0"}}}
 	//make sure the value is not in the model:
 	if value, err := dataModel.GetSourceEntity(source.ID()); err != nil {
 		dataModel.DeleteSourceEntity(value)

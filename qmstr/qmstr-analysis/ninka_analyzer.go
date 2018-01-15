@@ -65,8 +65,7 @@ func (na *NinkaAnalyzer) Analyze(a Analyzable) error {
 	if err != nil {
 		return err
 	}
-
-	a.StoreResult(na.result)
+	a.StoreResult(na.GetName(), na.result)
 
 	return nil
 }

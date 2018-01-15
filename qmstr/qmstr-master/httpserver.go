@@ -57,6 +57,9 @@ func handleSourceRequest(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 			return
 		}
+		if s.Licenses == nil {
+			s.Licenses = make(map[string][]string)
+		}
 		if s.ID() != id {
 			//strange:
 			s.Path = id
@@ -343,9 +346,11 @@ func handleReportRequest(w http.ResponseWriter, r *http.Request) {
 		Info.Printf("handleReportRequest: %s - no such entity, returning an empty one", r.Method)
 		t = model.TargetEntity{Name: "", Hash: ""}
 	}
-	report := CreateReport(t)
-	result := fmt.Sprintf("{ \"report\": \"%s\" }", report)
-	w.Write([]byte(result))
+	for _, ana := range analyzers {
+		report := CreateReport(ana.GetName(), t)
+		result := fmt.Sprintf("{ \"report with %s\": \"%s\" }", ana.GetName(), report)
+		w.Write([]byte(result))
+	}
 }
 
 func handleHealthRequest(w http.ResponseWriter, r *http.Request) {

@@ -14,14 +14,16 @@ type report struct {
 }
 
 // CreateReport renders an SPDX document for the given TargetEntity
-func CreateReport(target model.TargetEntity) string {
+func CreateReport(toolName string, target model.TargetEntity) string {
 
 	//Define the template
 	const reportTemplate = "SPDXVersion: {{.SPDXVersion}}\\nDataLicense: {{.DataLicense}}\\nPackageName: {{.Name}}\\nPackageLicenseDeclared: {{.License}}"
 	//Create a new template and parse the data
 	r := template.Must(template.New("report").Parse(reportTemplate))
 
-	licenses := extractLicenses(target.Sources)
+	licenses := extractLicenses(toolName, target.Sources)
+
+	// TODO: if licenses[0] == nil
 	report := report{"SPDX-2.0", "CCO-1.0", target.Name, strings.Join(licenses, " AND ")}
 
 	//Execute the template
@@ -33,7 +35,7 @@ func CreateReport(target model.TargetEntity) string {
 	return b.String()
 }
 
-func extractLicenses(sources []string) []string {
+func extractLicenses(toolName string, sources []string) []string {
 	licenseSet := map[string]struct{}{}
 	for _, v := range sources {
 		s, err := Model.GetSourceEntity(v)
@@ -51,13 +53,21 @@ func extractLicenses(sources []string) []string {
 				if err != nil {
 					return []string{}
 				}
-				for _, license := range ts.Licenses {
-					licenseSet[license] = struct{}{}
+				for t, licenses := range ts.Licenses {
+					if t == toolName {
+						for _,license := range licenses {
+							licenseSet[license] = struct{}{}
+						}
+					}
 				}
 			}
 		} else {
-			for _, license := range s.Licenses {
-				licenseSet[license] = struct{}{}
+			for t, licenses := range s.Licenses {
+				if t == toolName {
+					for _,license := range licenses {
+						licenseSet[license] = struct{}{}
+					}
+				}
 			}
 		}
 	}
