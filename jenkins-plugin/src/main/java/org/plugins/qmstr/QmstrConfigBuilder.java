@@ -42,13 +42,34 @@ public class QmstrConfigBuilder extends Builder {
         configData.put("workdir", wd.absolutize().toString());
 
         QmstrHttpClient client = new QmstrHttpClient("http://localhost:9000");
-        client.configure(configData);
 
         LocalDateTime now = LocalDateTime.now();
-        LocalDateTime timeout = now.plusMinutes(10);
+        LocalDateTime timeout = now.plusSeconds(10);
 
         while (now.isBefore(timeout)) {
             JSONObject health = client.health();
+            if (health == null) {
+                continue;
+            }
+            if (!health.getString("running").equals("ok")) {
+                return false;
+            } else {
+                break;
+            }
+        }
+
+        if (!client.configure(configData)) {
+            return false;
+        }
+
+        now = LocalDateTime.now();
+        timeout = now.plusMinutes(10);
+
+        while (now.isBefore(timeout)) {
+            JSONObject health = client.health();
+            if (health == null) {
+                continue;
+            }
             if (health.has("scanned")) {
                 if (health.getBoolean("scanned")) {
                     return true;
@@ -58,6 +79,7 @@ public class QmstrConfigBuilder extends Builder {
                 System.out.println("Your qmstr master server is too old");
                 return false;
             }
+            Thread.sleep(1000);
             now = LocalDateTime.now();
         }
         return false;

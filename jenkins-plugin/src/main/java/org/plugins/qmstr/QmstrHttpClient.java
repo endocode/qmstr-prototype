@@ -25,7 +25,7 @@ public class QmstrHttpClient {
 
     public JSONObject health() {
         try {
-            return this.getRequest("/health");
+            return this.getJSONRequest("/health");
         } catch (QmstrHttpClientExeption e) {
             // do something
         }
@@ -33,9 +33,18 @@ public class QmstrHttpClient {
         return null;
     }
 
+    public void quit() {
+        try {
+            this.getRequest("/quit");
+        } catch (QmstrHttpClientExeption e) {
+            // do something
+        }
+        // handle better
+    }
+
     public JSONObject linkedTargets() {
         try {
-            return this.getRequest("/linkedtargets");
+            return this.getJSONRequest("/linkedtargets");
         } catch (QmstrHttpClientExeption e) {
             // do something
         }
@@ -45,7 +54,7 @@ public class QmstrHttpClient {
 
     public JSONObject report(String id) {
         try {
-            return this.getRequest("/report?id=" + id);
+            return this.getJSONRequest("/report?id=" + id);
         } catch (QmstrHttpClientExeption e) {
             // do something
         }
@@ -53,16 +62,22 @@ public class QmstrHttpClient {
         return null;
     }
 
-    public void configure(JSONObject configData) {
+    public boolean configure(JSONObject configData) {
         try {
             this.postRequest("/config", configData);
+            return true;
         } catch (QmstrHttpClientExeption e) {
             e.printStackTrace();
+            return false;
         }
     }
 
     // TODO: Handle errors better and/or log something
-    private JSONObject getRequest(String endpoint) throws QmstrHttpClientExeption {
+    private JSONObject getJSONRequest(String endpoint) throws QmstrHttpClientExeption {
+        return JSONObject.fromObject(this.getRequest(endpoint));
+    }
+
+    private String getRequest(String endpoint) throws QmstrHttpClientExeption {
 
         try {
             URL url = new URL(this.url + endpoint);
@@ -89,7 +104,7 @@ public class QmstrHttpClient {
             in.close();
             con.disconnect();
 
-            return JSONObject.fromObject(content.toString());
+            return content.toString();
 
         } catch (MalformedURLException e) {
             // from url
@@ -113,11 +128,12 @@ public class QmstrHttpClient {
 
             con.setRequestMethod("POST");
             con.setRequestProperty("Content-Type", "application/json");
+            con.setRequestProperty( "Accept", "*/*" );
             con.setDoOutput(true);
 
             OutputStreamWriter writer = new OutputStreamWriter(con.getOutputStream());
 
-            payload.write(writer);
+            writer.write(payload.toString());
             writer.flush();
 
             int status = con.getResponseCode();
@@ -126,7 +142,20 @@ public class QmstrHttpClient {
             if (status != 200) {
                 throw new QmstrHttpClientExeption("Something went wrong contacting master. Status " + status);
             }
+
+            BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+            String inputLine;
+            StringBuffer content = new StringBuffer();
+
+            while ((inputLine = in.readLine()) != null) {
+                content.append(inputLine);
+            }
+
+            in.close();
+            writer.close();
             con.disconnect();
+
+            System.out.println(content.toString());
 
         } catch (MalformedURLException e) {
             // from url

@@ -1,5 +1,9 @@
 package org.plugins.qmstr;
 
+import java.io.IOException;
+
+import org.kohsuke.stapler.DataBoundConstructor;
+
 import hudson.Extension;
 import hudson.Launcher;
 import hudson.model.AbstractBuild;
@@ -7,9 +11,6 @@ import hudson.model.AbstractProject;
 import hudson.model.BuildListener;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Builder;
-import org.kohsuke.stapler.DataBoundConstructor;
-
-import java.io.IOException;
 
 
 public class QmstrMasterBuilder extends Builder {
@@ -34,9 +35,12 @@ public class QmstrMasterBuilder extends Builder {
     @Override
     public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) throws InterruptedException, IOException {
 
+        QmstrHttpClient client = new QmstrHttpClient("http://localhost:9000");
+        client.quit();
+
         QuartermasterProperty prop = build.getProject().getProperty(QuartermasterProperty.class);
         String pathToQMstrMaster;
-        Process process;
+        //Process process;
 
         if (prop != null){
             pathToQMstrMaster = prop.getPath();
@@ -44,7 +48,11 @@ public class QmstrMasterBuilder extends Builder {
             return false;
         }
 
-        process = Runtime.getRuntime().exec(pathToQMstrMaster);
+        //launcher.launch(pathToQMstrMaster, build.getEnvVars(), listener.getLogger(),build.getProject().getWorkspace());
+        // process = Runtime.getRuntime().exec(pathToQMstrMaster);
+        ProcessBuilder pb = new ProcessBuilder(pathToQMstrMaster).redirectOutput(ProcessBuilder.Redirect.INHERIT).redirectError(ProcessBuilder.Redirect.INHERIT);
+        pb.start();
+        
         
         // Check if the master is actually running first
         build.addAction(new QmstrBadge());
