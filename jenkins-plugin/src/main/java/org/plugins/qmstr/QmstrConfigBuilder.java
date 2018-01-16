@@ -31,7 +31,7 @@ public class QmstrConfigBuilder extends Builder {
         }
         @Override
         public String getDisplayName() {
-            return "execute Qmstr-master server";
+            return "configure Qmstr-master server";
         }
     }
 
@@ -41,7 +41,7 @@ public class QmstrConfigBuilder extends Builder {
         JSONObject configData = new JSONObject();
         configData.put("workdir", wd.absolutize().toString());
 
-        QmstrHttpClient client = new QmstrHttpClient("http://localhiost:9000");
+        QmstrHttpClient client = new QmstrHttpClient("http://localhost:9000");
         client.configure(configData);
 
         LocalDateTime now = LocalDateTime.now();
@@ -55,6 +55,7 @@ public class QmstrConfigBuilder extends Builder {
                 }
             } else {
                 // qmstr does not support this
+                System.out.println("Your qmstr master server is too old");
                 return false;
             }
             now = LocalDateTime.now();

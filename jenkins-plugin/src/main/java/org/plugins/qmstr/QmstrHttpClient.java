@@ -113,6 +113,7 @@ public class QmstrHttpClient {
 
             con.setRequestMethod("POST");
             con.setRequestProperty("Content-Type", "application/json");
+            con.setDoOutput(true);
 
             OutputStreamWriter writer = new OutputStreamWriter(con.getOutputStream());
 
