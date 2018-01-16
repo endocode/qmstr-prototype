@@ -3,10 +3,12 @@ package org.plugins.qmstr;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
+
 import net.sf.json.JSONObject;
 
 /**
@@ -49,6 +51,14 @@ public class QmstrHttpClient {
         }
         // handle better
         return null;
+    }
+
+    public void configure(JSONObject configData) {
+        try {
+            this.postRequest("/config", configData);
+        } catch (QmstrHttpClientExeption e) {
+            e.printStackTrace();
+        }
     }
 
     // TODO: Handle errors better and/or log something
@@ -95,6 +105,39 @@ public class QmstrHttpClient {
         return null;
     }
 
+    private void postRequest(String endpoint, JSONObject payload) throws QmstrHttpClientExeption {
+
+        try {
+            URL url = new URL(this.url + endpoint);
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+
+            con.setRequestMethod("POST");
+            con.setRequestProperty("Content-Type", "application/json");
+
+            OutputStreamWriter writer = new OutputStreamWriter(con.getOutputStream());
+
+            payload.write(writer);
+            writer.flush();
+
+            int status = con.getResponseCode();
+
+            // TODO: handle better. this is too generic
+            if (status != 200) {
+                throw new QmstrHttpClientExeption("Something went wrong contacting master. Status " + status);
+            }
+            con.disconnect();
+
+        } catch (MalformedURLException e) {
+            // from url
+            e.printStackTrace();
+        } catch (ProtocolException e) {
+            // from setRequestMethod
+            e.printStackTrace();
+        } catch (IOException e) {
+            // from con, status, in, in.readLine(), close, disconnect
+            e.printStackTrace();
+        }
+    }
     /**
      * QmstrHttpClientExeption
      */
