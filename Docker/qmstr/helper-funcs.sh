@@ -48,6 +48,7 @@ function build_cmake(){
 }
 
 function build_qmstr(){
+    rm -fr /go/pkg
     PROGS="qmstr-prototype/qmstr/qmstr-master qmstr-prototype/qmstr/qmstr-wrapper"
     for p in $PROGS; do
         printheader "Installing dependencies for $p"
