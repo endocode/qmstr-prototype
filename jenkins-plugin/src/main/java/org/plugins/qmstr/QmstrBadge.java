@@ -4,31 +4,19 @@ import hudson.Extension;
 import hudson.model.BuildBadgeAction;
 import net.sf.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
-import java.net.URL;
-
 @Extension
 public class QmstrBadge implements BuildBadgeAction{
 
-    private String status= "";
-
     public String getStatus() {
-
+        String status = "Qmstr not running";
         QmstrHttpClient qmstr = new QmstrHttpClient("http://localhost:9000");
 
         JSONObject health = qmstr.health();
-        if (health == null) {
-            return "";
-        }
-
-        String result = health.getString("running");
-        if (result.equals("ok")){
-            return "Qmstr is running";
+        if (health != null) {
+            String result = health.getString("running");
+            if (result.equals("ok")){
+                status = "Qmstr is running";
+            }
         }
         return status;
     }
