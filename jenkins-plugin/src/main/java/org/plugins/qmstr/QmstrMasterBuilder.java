@@ -1,6 +1,8 @@
 package org.plugins.qmstr;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.StringTokenizer;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 
@@ -50,7 +52,14 @@ public class QmstrMasterBuilder extends Builder {
 
         //launcher.launch(pathToQMstrMaster, build.getEnvVars(), listener.getLogger(),build.getProject().getWorkspace());
         // process = Runtime.getRuntime().exec(pathToQMstrMaster);
-        ProcessBuilder pb = new ProcessBuilder(pathToQMstrMaster).redirectOutput(ProcessBuilder.Redirect.INHERIT).redirectError(ProcessBuilder.Redirect.INHERIT);
+
+        StringTokenizer st = new StringTokenizer(pathToQMstrMaster);
+        ArrayList<String> list = new ArrayList<>();
+        while (st.hasMoreTokens()) {
+            list.add(st.nextToken());
+        }
+
+        ProcessBuilder pb = new ProcessBuilder(list).redirectOutput(ProcessBuilder.Redirect.INHERIT).redirectError(ProcessBuilder.Redirect.INHERIT);
         pb.start();
         
         
