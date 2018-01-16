@@ -8,9 +8,12 @@ import hudson.model.AbstractProject;
 import hudson.model.BuildListener;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Builder;
+import net.sf.json.JSONObject;
+
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 
 
 public class QmstrConfigBuilder extends Builder {
@@ -34,8 +37,29 @@ public class QmstrConfigBuilder extends Builder {
 
     @Override
     public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) throws InterruptedException, IOException {
-        FilePath wd = build.getProject().getWorkspace();
+        FilePath wd = build.getWorkspace();
+        JSONObject configData = new JSONObject();
+        configData.put("workdir", wd.absolutize().toString());
 
+        QmstrHttpClient client = new QmstrHttpClient("http://localhiost:9000");
+        client.configure(configData);
+
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime timeout = now.plusMinutes(10);
+
+        while (now.isBefore(timeout)) {
+            JSONObject health = client.health();
+            if (health.has("scanned")) {
+                if (health.getBoolean("scanned")) {
+                    return true;
+                }
+            } else {
+                // qmstr does not support this
+                return false;
+            }
+            now = LocalDateTime.now();
+        }
+        return false;
     }
 
 }
