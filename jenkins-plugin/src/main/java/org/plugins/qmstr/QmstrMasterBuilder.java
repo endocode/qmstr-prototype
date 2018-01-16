@@ -50,18 +50,7 @@ public class QmstrMasterBuilder extends Builder {
             return false;
         }
 
-        //launcher.launch(pathToQMstrMaster, build.getEnvVars(), listener.getLogger(),build.getProject().getWorkspace());
-        // process = Runtime.getRuntime().exec(pathToQMstrMaster);
-
-        StringTokenizer st = new StringTokenizer(pathToQMstrMaster);
-        ArrayList<String> list = new ArrayList<>();
-        while (st.hasMoreTokens()) {
-            list.add(st.nextToken());
-        }
-
-        ProcessBuilder pb = new ProcessBuilder(list).redirectOutput(ProcessBuilder.Redirect.INHERIT).redirectError(ProcessBuilder.Redirect.INHERIT);
-        pb.start();
-        
+        launcher.launch(pathToQMstrMaster, build.getEnvVars(), listener.getLogger(),build.getProject().getWorkspace());
         
         // Check if the master is actually running first
         build.addAction(new QmstrBadge());

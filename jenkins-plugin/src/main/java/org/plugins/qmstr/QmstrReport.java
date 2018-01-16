@@ -1,5 +1,11 @@
 package org.plugins.qmstr;
 
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.kohsuke.stapler.DataBoundConstructor;
+
 import hudson.Extension;
 import hudson.Launcher;
 import hudson.model.AbstractBuild;
@@ -11,19 +17,6 @@ import hudson.tasks.Publisher;
 import hudson.tasks.Recorder;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
-
-import org.kohsuke.stapler.DataBoundConstructor;
-import org.plugins.qmstr.QmstrHttpClient.QmstrHttpClientExeption;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
-import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
 
 @Extension
 public class QmstrReport extends Recorder {
