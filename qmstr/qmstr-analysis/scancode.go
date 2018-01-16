@@ -1,14 +1,21 @@
 package analysis
 
-import "fmt"
+import (
+	"fmt"
+	"errors"
+)
 
 type PrescanScanCodeAnalyzer struct {
 	ScanData map[string]interface{}
 }
 
 func (la *PrescanScanCodeAnalyzer) Configure(data map[string]interface{}) error {
-	la.ScanData = data["scancode"].(map[string]interface{})
-	return nil
+	if value, ok := data["scancode"]; ok && value != nil{
+		la.ScanData = data["scancode"].(map[string]interface{})
+		return nil
+	}
+
+	return errors.New("Scancode is not initialized")
 }
 
 func (la *PrescanScanCodeAnalyzer) Analyze(a Analyzable) error {
@@ -25,7 +32,7 @@ func (la *PrescanScanCodeAnalyzer) Analyze(a Analyzable) error {
 	}
 	result := map[string]interface{}{}
 	result["licenses"] = licenses
-	a.StoreResult(result)
+	a.StoreResult(la.GetName(), result)
 	return nil
 }
 
