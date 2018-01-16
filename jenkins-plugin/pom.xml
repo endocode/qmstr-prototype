@@ -19,6 +19,8 @@
           ~ hpi-plugin.version: The HPI Maven Plugin version used by the plugin..
           ~ stapler-plugin.version: The Stapler Maven plugin version required by the plugin.
      -->
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
     <name>TODO Plugin</name>
     <description>TODO</description>
@@ -96,6 +98,24 @@
         <url>https://github.com/jenkinsci/${project.artifactId}-plugin</url>
     </scm>
     -->
+
+<build>
+<plugins>
+    <plugin>
+    <groupId>org.codehaus.mojo</groupId>
+    <artifactId>animal-sniffer-maven-plugin</artifactId>
+    <version>1.16</version>
+    <configuration>
+      <signature>
+        <groupId>org.codehaus.mojo.signature</groupId>
+        <artifactId>java18</artifactId>
+        <version>1.0</version>
+      </signature>
+    </configuration>
+  </plugin>
+</plugins>
+</build>
+
     <repositories>
         <repository>
             <id>repo.jenkins-ci.org</id>
