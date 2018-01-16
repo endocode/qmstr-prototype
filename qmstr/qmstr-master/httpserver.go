@@ -350,7 +350,7 @@ func handleReportRequest(w http.ResponseWriter, r *http.Request) {
 
 func handleHealthRequest(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
-	Info.Printf("handleHealthRequest: reporting on heath status...")
+	Info.Printf("handleHealthRequest: reporting on health status...")
 	select {
 	case msg := <-scanChannel:
 		Info.Println("received message")
