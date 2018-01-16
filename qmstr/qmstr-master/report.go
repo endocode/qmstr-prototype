@@ -10,9 +10,10 @@ import (
 
 type report struct {
 	SPDXVersion, DataLicense, Name string
-	License                        string
+	License , Copyholder           string
 }
 
+var licenses, copyholders []string
 // CreateReport renders an SPDX document for the given TargetEntity
 func CreateReport(toolName string, target model.TargetEntity) string {
 
@@ -21,10 +22,10 @@ func CreateReport(toolName string, target model.TargetEntity) string {
 	//Create a new template and parse the data
 	r := template.Must(template.New("report").Parse(reportTemplate))
 
-	licenses := extractLicenses(toolName, target.Sources)
+	extractLicenses(toolName, target.Sources)
 
 	// TODO: if licenses[0] == nil
-	report := report{"SPDX-2.0", "CCO-1.0", target.Name, strings.Join(licenses, " AND ")}
+	report := report{"SPDX-2.0", "CCO-1.0", target.Name, strings.Join(licenses, " AND "), strings.Join(copyholders, " AND ")}
 
 	//Execute the template
 	b := bytes.Buffer{}
@@ -35,23 +36,24 @@ func CreateReport(toolName string, target model.TargetEntity) string {
 	return b.String()
 }
 
-func extractLicenses(toolName string, sources []string) []string {
+func extractLicenses(toolName string, sources []string) {
 	licenseSet := map[string]struct{}{}
+	copyholderSet := map[string]struct{}{}
 	for _, v := range sources {
 		s, err := Model.GetSourceEntity(v)
 		if err != nil {
-			return []string{}
+			return
 		}
 		if s.Licenses == nil || len(s.Licenses) == 0 {
 			// Find corresponding target entity
 			t, err := Model.GetTargetEntityByPath(v)
 			if err != nil {
-				return []string{}
+				return
 			}
 			for _, source := range t.Sources {
 				ts, err := Model.GetSourceEntity(source)
 				if err != nil {
-					return []string{}
+					return
 				}
 				for t, licenses := range ts.Licenses {
 					if t == toolName {
@@ -59,6 +61,10 @@ func extractLicenses(toolName string, sources []string) []string {
 							licenseSet[license] = struct{}{}
 						}
 					}
+				}
+				//extract copyholders
+				for _, copyholder := range ts.Copyholders {
+					copyholderSet[copyholder] = struct{}{}
 				}
 			}
 		} else {
@@ -69,11 +75,16 @@ func extractLicenses(toolName string, sources []string) []string {
 					}
 				}
 			}
+			//extract copyholders
+			for _, copyholder := range s.Copyholders {
+				copyholderSet[copyholder] = struct{}{}
+			}
 		}
 	}
-	license := []string{}
 	for k := range licenseSet {
-		license = append(license, k)
+		licenses = append(licenses, k)
 	}
-	return license
+	for c := range copyholderSet {
+		copyholders = append(copyholders, c)
+	}
 }

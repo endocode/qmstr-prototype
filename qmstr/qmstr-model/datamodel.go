@@ -28,7 +28,7 @@ func (m *DataModel) GetSourceEntity(id string) (SourceEntity, error) {
 	if value, ok := m.sources[id]; ok {
 		return value, nil
 	}
-	return SourceEntity{"", "", map[string][]string{}}, fmt.Errorf("source entity %s does not exist", id)
+	return SourceEntity{"", "", map[string][]string{}, []string{}, []string{}}, fmt.Errorf("source entity %s does not exist", id)
 }
 
 // AddSourceEntity adds a source file to the model.

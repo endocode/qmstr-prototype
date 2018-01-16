@@ -14,6 +14,8 @@ type SourceEntity struct {
 	Path     string
 	Hash     string
 	Licenses map[string][]string
+	Authors  []string
+	Copyholders  [] string
 }
 
 // ID for SourceEntity uses the path (assuming it is the package local
@@ -25,6 +27,12 @@ func (e *SourceEntity) ID() string {
 func (e *SourceEntity) StoreResult(toolName string, result map[string]interface{}) error {
 	if lics, ok := result["licenses"]; ok {
 		e.Licenses[toolName] = lics.([]string)
+	}
+	if copyhold, ok := result["copyholders"]; ok {
+		e.Copyholders = copyhold.([]string)
+	}
+	if auth, ok := result["authors"]; ok {
+		e.Authors = auth.([]string)
 	}
 	return nil
 }
