@@ -37,7 +37,10 @@ RUN go get qmstr-prototype/qmstr/qmstr-master && \
 # build plugin
 #RUN cd /qmstr/jenkins-plugin && mvn package
 
-RUN rm -fr /qmstr/*
+RUN rm -fr /qmstr/* && chown -R jenkins:jenkins /qmstr/
+RUN chown -R jenkins:jenkins /go/
+
+
 RUN mkdir /qmstr-wrapper && \
     for i in gcc g++; do ln -s /go/bin/qmstr-wrapper /qmstr-wrapper/${i}; done
 
