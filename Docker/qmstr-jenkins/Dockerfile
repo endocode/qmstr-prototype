@@ -3,14 +3,14 @@ USER root
 
 RUN apt-get update && \
     apt-get install -y autoconf git libio-captureoutput-perl \
-    libtool cmake wget tar build-essential maven python python-pip
-#curl libz-dev libssl-dev
+    libtool cmake wget tar build-essential maven python python-pip \
+    curl libz-dev libssl-dev
 
 RUN cd /tmp && wget https://redirector.gvt1.com/edgedl/go/go1.9.2.linux-amd64.tar.gz && tar -xvf go1.9.2.linux-amd64.tar.gz && mv go/ /usr/local
 
 ENV GOROOT /usr/local/go
 ENV GOPATH /go
-ENV PATH $GOROOT/bin:$GOPATH/bin:$PATH
+ENV PATH $GOROOT/bin:$GOPATH/bin:/var/jenkins_home/.local/bin:$PATH
 
 # install ninka
 RUN mkdir /ninka && \
@@ -20,8 +20,6 @@ RUN mkdir /ninka && \
     cd /ninka && perl Makefile.PL && make && make install && \
     rm -fr /ninka
 
-# install scancode
-RUN pip install scancode-toolkit
 
 # setup qmstr build env
 RUN mkdir -p /go/src/qmstr-prototype && \
@@ -40,9 +38,14 @@ RUN go get qmstr-prototype/qmstr/qmstr-master && \
 RUN rm -fr /qmstr/* && chown -R jenkins:jenkins /qmstr/
 RUN chown -R jenkins:jenkins /go/
 
+VOLUME /qmstr
+COPY helper-funcs.sh /helper-funcs.sh
 
 RUN mkdir /qmstr-wrapper && \
     for i in gcc g++; do ln -s /go/bin/qmstr-wrapper /qmstr-wrapper/${i}; done
 
 
 USER jenkins
+
+# install scancode
+RUN pip install --user scancode-toolkit
