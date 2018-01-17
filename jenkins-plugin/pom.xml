@@ -22,8 +22,8 @@
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
-    <name>TODO Plugin</name>
-    <description>TODO</description>
+    <name>QMSTR Plugin</name>
+    <description>qmstrize your builds</description>
     <url>https://wiki.jenkins-ci.org/display/JENKINS/TODO+Plugin</url>
     <!-- The default licence for Jenkins OSS Plugins is MIT. Substitute for the applicable one if needed. -->
     <licenses>
