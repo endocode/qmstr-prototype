@@ -48,7 +48,7 @@ public class QmstrConfigBuilder extends Builder {
 
         while (now.isBefore(timeout)) {
             JSONObject health = client.health();
-            if (health == null) {
+            if (health == null || !health.has("running")) {
                 continue;
             }
             if (!health.getString("running").equals("ok")) {
@@ -63,7 +63,7 @@ public class QmstrConfigBuilder extends Builder {
         }
 
         now = LocalDateTime.now();
-        timeout = now.plusMinutes(10);
+        timeout = now.plusMinutes(15);
 
         while (now.isBefore(timeout)) {
             JSONObject health = client.health();

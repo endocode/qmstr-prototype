@@ -41,9 +41,14 @@ public class QmstrReport extends Recorder {
             return false;
         }
 
+        Map<String, String> map = new HashMap<>();
+        if (!linkedTargets.has("linkedtargets")) {
+
+            return true;
+        }
+
         JSONArray linkedtargetsArray = linkedTargets.getJSONArray("linkedtargets");
 
-        Map<String, String> map = new HashMap();
         for (int i=0; i< linkedtargetsArray.size(); i++){
 
             String targetName = linkedtargetsArray.get(i).toString();

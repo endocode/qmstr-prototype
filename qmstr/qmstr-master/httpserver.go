@@ -368,7 +368,7 @@ func handleLinkedTargetsRequest(w http.ResponseWriter, r *http.Request) {
 
 	b, err := json.Marshal(Model.GetAllLinkedTargets())
 	if err == nil {
-		result := fmt.Sprintf("{ \"linkedtargets\" : %s}", string(b))
+		result := fmt.Sprintf("{ \"linkedtargets\": %s}", string(b))
 		w.Write([]byte(result))
 	} else {
 		Info.Printf("Error: %v", err)
