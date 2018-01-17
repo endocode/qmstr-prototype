@@ -24,7 +24,7 @@ RUN mkdir /ninka && \
 # setup qmstr build env
 RUN mkdir -p /go/src/qmstr-prototype && \
     mkdir /qmstr && \
-    git clone https://github.com/QMSTR/qmstr-prototype.git /qmstr && \
+    git clone -b markus/jenkins-config-qmstr https://github.com/endocode/qmstr-prototype.git /qmstr && \
     ln -s /qmstr/qmstr /go/src/qmstr-prototype/qmstr
 
 # build and install qmstr
